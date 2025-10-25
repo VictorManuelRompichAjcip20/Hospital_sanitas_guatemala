@@ -1,0 +1,951 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Administrador - Hospital Sanitas</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #F0F4F8;
+            color: #334155;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #4FC3F7 0%, #0288D1 100%);
+            color: white;
+            padding: 24px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 16px rgba(15, 118, 179, 0.15);
+        }
+
+        .header h1 {
+            font-weight: 600;
+            font-size: 26px;
+            letter-spacing: -0.5px;
+        }
+
+        .logout-btn {
+            background: rgba(255, 255, 255, 0.15);
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.4);
+            padding: 10px 24px;
+            border-radius: 24px;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 14px;
+            transition: all 0.3s ease-in-out;
+            backdrop-filter: blur(10px);
+        }
+
+        .logout-btn:hover {
+            background: white;
+            color: #0288D1;
+            border-color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(255, 255, 255, 0.3);
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 32px auto;
+            padding: 0 24px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 28px;
+            border-radius: 16px;
+            box-shadow: 0 2px 8px rgba(15, 23, 42, 0.08);
+            transition: all 0.3s ease-in-out;
+            border: 1px solid rgba(79, 195, 247, 0.1);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(79, 195, 247, 0.15);
+        }
+
+        .stat-card h3 {
+            color: #64748B;
+            font-size: 13px;
+            font-weight: 500;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .stat-card .number {
+            color: #4FC3F7;
+            font-size: 38px;
+            font-weight: 700;
+            letter-spacing: -1px;
+        }
+
+        .tabs {
+            background: white;
+            padding: 20px 24px;
+            border-radius: 16px 16px 0 0;
+            box-shadow: 0 2px 8px rgba(15, 23, 42, 0.08);
+            display: flex;
+            gap: 12px;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .tabs-left {
+            display: flex;
+            gap: 8px;
+        }
+
+        .tab {
+            padding: 12px 24px;
+            background: #F8FAFC;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 14px;
+            color: #64748B;
+            transition: all 0.3s ease-in-out;
+        }
+
+        .tab:hover {
+            background: #E0F2FE;
+            color: #0288D1;
+        }
+
+        .tab.active {
+            background: linear-gradient(135deg, #4FC3F7 0%, #0288D1 100%);
+            color: white;
+            box-shadow: 0 4px 12px rgba(79, 195, 247, 0.3);
+        }
+
+        .btn-add {
+            background: #10B981;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.3s ease-in-out;
+        }
+
+        .btn-add:hover {
+            background: #059669;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+        }
+
+        .content-area {
+            background: white;
+            padding: 32px;
+            border-radius: 0 0 16px 16px;
+            box-shadow: 0 2px 8px rgba(15, 23, 42, 0.08);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th {
+            background: linear-gradient(135deg, #4FC3F7 0%, #0288D1 100%);
+            color: white;
+            padding: 14px 16px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        th:first-child {
+            border-radius: 10px 0 0 0;
+        }
+
+        th:last-child {
+            border-radius: 0 10px 0 0;
+        }
+
+        td {
+            padding: 16px;
+            border-bottom: 1px solid #E2E8F0;
+            font-size: 14px;
+        }
+
+        tr {
+            transition: all 0.2s ease-in-out;
+        }
+
+        tr:hover {
+            background: #F8FAFC;
+        }
+
+        .btn-action {
+            padding: 8px 14px;
+            margin: 0 4px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 500;
+            transition: all 0.3s ease-in-out;
+        }
+
+        .btn-edit {
+            background: #3B82F6;
+            color: white;
+        }
+
+        .btn-edit:hover {
+            background: #2563EB;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(59, 130, 246, 0.3);
+        }
+
+        .btn-delete {
+            background: #EF4444;
+            color: white;
+        }
+
+        .btn-delete:hover {
+            background: #DC2626;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(239, 68, 68, 0.3);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(4px);
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 5% auto;
+            padding: 36px;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 600px;
+            box-shadow: 0 20px 60px rgba(15, 23, 42, 0.3);
+            animation: slideUp 0.3s ease-in-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(30px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 2px solid #E0F2FE;
+        }
+
+        .modal-header h2 {
+            color: #0288D1;
+            font-weight: 600;
+            font-size: 22px;
+        }
+
+        .close {
+            color: #94A3B8;
+            font-size: 32px;
+            font-weight: 300;
+            cursor: pointer;
+            transition: all 0.3s ease-in-out;
+            line-height: 1;
+        }
+
+        .close:hover {
+            color: #334155;
+            transform: rotate(90deg);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #334155;
+            font-size: 14px;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #E2E8F0;
+            border-radius: 10px;
+            font-size: 14px;
+            transition: all 0.3s ease-in-out;
+            font-family: inherit;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #4FC3F7;
+            box-shadow: 0 0 0 3px rgba(79, 195, 247, 0.1);
+        }
+
+        .btn-submit {
+            background: linear-gradient(135deg, #4FC3F7 0%, #0288D1 100%);
+            color: white;
+            border: none;
+            padding: 14px 32px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 15px;
+            width: 100%;
+            transition: all 0.3s ease-in-out;
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(79, 195, 247, 0.4);
+        }
+
+        /* Sistema de alertas mejorado con animaciones */
+        .alert {
+            padding: 16px 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            display: none;
+            align-items: center;
+            gap: 12px;
+            animation: slideInRight 0.4s ease-in-out;
+            position: fixed;
+            top: 24px;
+            right: 24px;
+            z-index: 2000;
+            min-width: 320px;
+            max-width: 420px;
+            box-shadow: 0 10px 40px rgba(15, 23, 42, 0.2);
+        }
+
+        @keyframes slideInRight {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .alert-success {
+            background: #ECFDF5;
+            color: #065F46;
+            border: 2px solid #10B981;
+        }
+
+        .alert-error {
+            background: #FEF2F2;
+            color: #991B1B;
+            border: 2px solid #EF4444;
+        }
+
+        /* Animación de Check (éxito) */
+        .alert-icon {
+            width: 48px;
+            height: 48px;
+            flex-shrink: 0;
+        }
+
+        .checkmark-circle {
+            stroke-dasharray: 166;
+            stroke-dashoffset: 166;
+            stroke-width: 3;
+            stroke: #10B981;
+            fill: none;
+            animation: stroke 0.6s cubic-bezier(0.65, 0, 0.45, 1) forwards;
+        }
+
+        .checkmark-check {
+            transform-origin: 50% 50%;
+            stroke-dasharray: 48;
+            stroke-dashoffset: 48;
+            stroke: #10B981;
+            stroke-width: 3;
+            fill: none;
+            animation: stroke 0.3s cubic-bezier(0.65, 0, 0.45, 1) 0.5s forwards;
+        }
+
+        @keyframes stroke {
+            100% {
+                stroke-dashoffset: 0;
+            }
+        }
+
+        /* Animación de X (error) */
+        .error-circle {
+            stroke-dasharray: 166;
+            stroke-dashoffset: 166;
+            stroke-width: 3;
+            stroke: #EF4444;
+            fill: none;
+            animation: stroke 0.6s cubic-bezier(0.65, 0, 0.45, 1) forwards;
+        }
+
+        .error-x {
+            stroke-dasharray: 48;
+            stroke-dashoffset: 48;
+            stroke: #EF4444;
+            stroke-width: 3;
+            stroke-linecap: round;
+            fill: none;
+            animation: stroke 0.3s cubic-bezier(0.65, 0, 0.45, 1) 0.5s forwards;
+        }
+
+        .alert-message {
+            flex: 1;
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                padding: 20px 24px;
+            }
+
+            .container {
+                padding: 0 16px;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .tabs {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .tabs-left {
+                flex-direction: column;
+            }
+
+            .alert {
+                right: 16px;
+                left: 16px;
+                min-width: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🏥 Hospital Sanitas - Panel de Administración</h1>
+        <button class="logout-btn" onclick="logout()">Cerrar Sesión</button>
+    </div>
+
+    <div class="container">
+        <div id="alert" class="alert"></div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <h3>TOTAL PACIENTES</h3>
+                <div class="number" id="totalPacientes">-</div>
+            </div>
+            <div class="stat-card">
+                <h3>TOTAL MÉDICOS</h3>
+                <div class="number" id="totalMedicos">-</div>
+            </div>
+            <div class="stat-card">
+                <h3>USUARIOS ACTIVOS</h3>
+                <div class="number" id="totalUsuarios">-</div>
+            </div>
+            <div class="stat-card">
+                <h3>ARCHIVOS MÉDICOS</h3>
+                <div class="number">N/A</div>
+            </div>
+        </div>
+
+        <div class="tabs">
+            <div class="tabs-left">
+                <button class="tab active" onclick="switchTab('pacientes')">Pacientes</button>
+                <button class="tab" onclick="switchTab('medicos')">Médicos</button>
+            </div>
+            <button class="btn-add" onclick="openAddModal()" id="btnAdd">
+                ➕ Agregar Paciente
+            </button>
+        </div>
+
+        <div class="content-area">
+            <div id="pacientes-content">
+                <h3>Lista de Pacientes</h3>
+                <table id="patientsTable">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Nombre Completo</th>
+                            <th>Identificación</th>
+                            <th>Email</th>
+                            <th>Teléfono</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="patientsBody">
+                        <tr><td colspan="6" style="text-align: center;">Cargando...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div id="medicos-content" style="display: none;">
+                <h3>Lista de Médicos</h3>
+                <table id="medicosTable">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Nombre Completo</th>
+                            <th>Especialidad</th>
+                            <th>Licencia</th>
+                            <th>Email</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="medicosBody">
+                        <tr><td colspan="6" style="text-align: center;">Cargando...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para Agregar/Editar Paciente -->
+    <div id="modalPaciente" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalPacienteTitle">Agregar Paciente</h2>
+                <span class="close" onclick="closeModal('modalPaciente')">&times;</span>
+            </div>
+            <form id="formPaciente">
+                <input type="hidden" id="paciente_id" name="paciente_id">
+                <div class="form-group">
+                    <label>Nombres *</label>
+                    <input type="text" id="p_nombres" name="nombres" required>
+                </div>
+                <div class="form-group">
+                    <label>Apellidos *</label>
+                    <input type="text" id="p_apellidos" name="apellidos" required>
+                </div>
+                <div class="form-group">
+                    <label>Identificación *</label>
+                    <input type="text" id="p_identificacion" name="identificacion" required maxlength="13">
+                </div>
+                <div class="form-group">
+                    <label>Fecha de Nacimiento *</label>
+                    <input type="date" id="p_fecha_nacimiento" name="fecha_nacimiento" required>
+                </div>
+                <div class="form-group">
+                    <label>Género</label>
+                    <select id="p_genero" name="genero">
+                        <option value="">Seleccionar...</option>
+                        <option value="Masculino">Masculino</option>
+                        <option value="Femenino">Femenino</option>
+                        <option value="Otro">Otro</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Teléfono</label>
+                    <input type="tel" id="p_telefono" name="telefono">
+                </div>
+                <button type="submit" class="btn-submit">Guardar</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal para Agregar/Editar Médico -->
+    <div id="modalMedico" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalMedicoTitle">Agregar Médico</h2>
+                <span class="close" onclick="closeModal('modalMedico')">&times;</span>
+            </div>
+            <form id="formMedico">
+                <input type="hidden" id="medico_id" name="medico_id">
+                <div class="form-group">
+                    <label>Nombres *</label>
+                    <input type="text" id="m_nombres" name="nombres" required>
+                </div>
+                <div class="form-group">
+                    <label>Apellidos *</label>
+                    <input type="text" id="m_apellidos" name="apellidos" required>
+                </div>
+                <div class="form-group">
+                    <label>Especialidad *</label>
+                    <input type="text" id="m_especialidad" name="especialidad" required>
+                </div>
+                <div class="form-group">
+                    <label>Licencia Médica *</label>
+                    <input type="text" id="m_licencia" name="licencia_medica" required>
+                </div>
+                <div class="form-group">
+                    <label>Teléfono</label>
+                    <input type="tel" id="m_telefono" name="telefono">
+                </div>
+                <div class="form-group" id="emailGroup" style="display: none;">
+                    <label>Email *</label>
+                    <input type="email" id="m_email" name="email">
+                </div>
+                <div class="form-group" id="passwordGroup" style="display: none;">
+                    <label>Contraseña *</label>
+                    <input type="password" id="m_contrasena" name="contrasena" minlength="6">
+                </div>
+                <button type="submit" class="btn-submit">Guardar</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        let currentTab = 'pacientes';
+        let editingId = null;
+
+        async function loadStats() {
+            try {
+                // Cargar pacientes
+                const pResponse = await fetch('/pacientes');
+                const pData = await pResponse.json();
+                if (pData.success) {
+                    document.getElementById('totalPacientes').textContent = pData.pacientes.length;
+                    
+                    const tbody = document.getElementById('patientsBody');
+                    tbody.innerHTML = '';
+                    pData.pacientes.forEach(p => {
+                        tbody.innerHTML += `
+                            <tr>
+                                <td>${p.id}</td>
+                                <td>${p.nombres} ${p.apellidos}</td>
+                                <td>${p.identificacion}</td>
+                                <td>${p.email}</td>
+                                <td>${p.telefono || 'N/A'}</td>
+                                <td>
+                                    <button class="btn-action btn-edit" onclick="editPaciente(${p.id})">✏️ Editar</button>
+                                    <button class="btn-action btn-delete" onclick="deletePaciente(${p.id})">🗑️ Eliminar</button>
+                                </td>
+                            </tr>
+                        `;
+                    });
+                }
+
+                // Cargar médicos
+                const mResponse = await fetch('/medicos');
+                const mData = await mResponse.json();
+                if (mData.success) {
+                    document.getElementById('totalMedicos').textContent = mData.medicos.length;
+                    
+                    const tbody = document.getElementById('medicosBody');
+                    tbody.innerHTML = '';
+                    mData.medicos.forEach(m => {
+                        tbody.innerHTML += `
+                            <tr>
+                                <td>${m.id}</td>
+                                <td>${m.nombres} ${m.apellidos}</td>
+                                <td>${m.especialidad}</td>
+                                <td>${m.licencia_medica}</td>
+                                <td>${m.email}</td>
+                                <td>
+                                    <button class="btn-action btn-edit" onclick="editMedico(${m.id})">✏️ Editar</button>
+                                    <button class="btn-action btn-delete" onclick="deleteMedico(${m.id})">🗑️ Eliminar</button>
+                                </td>
+                            </tr>
+                        `;
+                    });
+                }
+
+                document.getElementById('totalUsuarios').textContent = 
+                    (pData.pacientes.length + mData.medicos.length + 1); // +1 por admin
+
+            } catch (error) {
+                console.error('Error al cargar estadísticas:', error);
+            }
+        }
+
+        function switchTab(tab) {
+            currentTab = tab;
+            
+            // Cambiar clase activa de tabs
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            event.target.classList.add('active');
+
+            // Mostrar contenido correspondiente
+            document.getElementById('pacientes-content').style.display = 
+                tab === 'pacientes' ? 'block' : 'none';
+            document.getElementById('medicos-content').style.display = 
+                tab === 'medicos' ? 'block' : 'none';
+            
+            // Cambiar botón de agregar
+            const btnAdd = document.getElementById('btnAdd');
+            btnAdd.textContent = tab === 'pacientes' ? '➕ Agregar Paciente' : '➕ Agregar Médico';
+        }
+
+        function openAddModal() {
+            editingId = null;
+            if (currentTab === 'pacientes') {
+                document.getElementById('modalPacienteTitle').textContent = 'Agregar Paciente';
+                document.getElementById('formPaciente').reset();
+                document.getElementById('paciente_id').value = '';
+                document.getElementById('modalPaciente').style.display = 'block';
+            } else {
+                document.getElementById('modalMedicoTitle').textContent = 'Agregar Médico';
+                document.getElementById('formMedico').reset();
+                document.getElementById('medico_id').value = '';
+                document.getElementById('emailGroup').style.display = 'block';
+                document.getElementById('passwordGroup').style.display = 'block';
+                document.getElementById('m_email').required = true;
+                document.getElementById('m_contrasena').required = true;
+                document.getElementById('modalMedico').style.display = 'block';
+            }
+        }
+
+        async function editPaciente(id) {
+            try {
+                const response = await fetch(`/pacientes/${id}`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    const p = data.paciente;
+                    editingId = id;
+                    document.getElementById('modalPacienteTitle').textContent = 'Editar Paciente';
+                    document.getElementById('paciente_id').value = id;
+                    document.getElementById('p_nombres').value = p.nombres;
+                    document.getElementById('p_apellidos').value = p.apellidos;
+                    document.getElementById('p_identificacion').value = p.identificacion;
+                    document.getElementById('p_fecha_nacimiento').value = p.fecha_nacimiento;
+                    document.getElementById('p_genero').value = p.genero || '';
+                    document.getElementById('p_telefono').value = p.telefono || '';
+                    document.getElementById('modalPaciente').style.display = 'block';
+                }
+            } catch (error) {
+                showAlert('Error al cargar datos del paciente', 'error');
+            }
+        }
+
+        async function editMedico(id) {
+            try {
+                const response = await fetch('/medicos');
+                const data = await response.json();
+                
+                if (data.success) {
+                    const m = data.medicos.find(med => med.id === id);
+                    if (m) {
+                        editingId = id;
+                        document.getElementById('modalMedicoTitle').textContent = 'Editar Médico';
+                        document.getElementById('medico_id').value = id;
+                        document.getElementById('m_nombres').value = m.nombres;
+                        document.getElementById('m_apellidos').value = m.apellidos;
+                        document.getElementById('m_especialidad').value = m.especialidad;
+                        document.getElementById('m_licencia').value = m.licencia_medica;
+                        document.getElementById('m_telefono').value = m.telefono || '';
+                        document.getElementById('emailGroup').style.display = 'none';
+                        document.getElementById('passwordGroup').style.display = 'none';
+                        document.getElementById('m_email').required = false;
+                        document.getElementById('m_contrasena').required = false;
+                        document.getElementById('modalMedico').style.display = 'block';
+                    }
+                }
+            } catch (error) {
+                showAlert('Error al cargar datos del médico', 'error');
+            }
+        }
+
+        async function deletePaciente(id) {
+            if (!confirm('¿Está seguro de eliminar este paciente? Esta acción no se puede deshacer.')) {
+                return;
+            }
+            
+            try {
+                const response = await fetch(`/pacientes/${id}`, {
+                    method: 'DELETE'
+                });
+                const data = await response.json();
+                
+                if (data.success) {
+                    showAlert('Paciente eliminado exitosamente', 'success');
+                    loadStats();
+                } else {
+                    showAlert(data.message || 'Error al eliminar paciente', 'error');
+                }
+            } catch (error) {
+                showAlert('Error de conexión', 'error');
+            }
+        }
+
+        async function deleteMedico(id) {
+            if (!confirm('¿Está seguro de eliminar este médico? Esta acción no se puede deshacer.')) {
+                return;
+            }
+            
+            try {
+                const response = await fetch(`/medicos/${id}`, {
+                    method: 'DELETE'
+                });
+                const data = await response.json();
+                
+                if (data.success) {
+                    showAlert('Médico eliminado exitosamente', 'success');
+                    loadStats();
+                } else {
+                    showAlert(data.message || 'Error al eliminar médico', 'error');
+                }
+            } catch (error) {
+                showAlert('Error de conexión', 'error');
+            }
+        }
+
+        document.getElementById('formPaciente').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(e.target);
+            const data = Object.fromEntries(formData.entries());
+            delete data.paciente_id;
+            
+            const id = document.getElementById('paciente_id').value;
+            const url = id ? `/pacientes/${id}` : '/register';
+            const method = id ? 'PUT' : 'POST';
+            
+            if (!id) {
+                // Si es nuevo, agregar email y contraseña (genera automáticamente)
+                data.email = `paciente_${Date.now()}@temp.com`;
+                data.contrasena = '123456';
+            }
+            
+            try {
+                const response = await fetch(url, {
+                    method: method,
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    showAlert(id ? 'Paciente actualizado exitosamente' : 'Paciente creado exitosamente', 'success');
+                    closeModal('modalPaciente');
+                    loadStats();
+                } else {
+                    showAlert(result.message || 'Error al guardar', 'error');
+                }
+            } catch (error) {
+                showAlert('Error de conexión', 'error');
+            }
+        });
+
+        document.getElementById('formMedico').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(e.target);
+            const data = Object.fromEntries(formData.entries());
+            delete data.medico_id;
+            
+            const id = document.getElementById('medico_id').value;
+            const url = id ? `/medicos/${id}` : '/register-medico';
+            const method = id ? 'PUT' : 'POST';
+            
+            try {
+                const response = await fetch(url, {
+                    method: method,
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    showAlert(id ? 'Médico actualizado exitosamente' : 'Médico creado exitosamente', 'success');
+                    closeModal('modalMedico');
+                    loadStats();
+                } else {
+                    showAlert(result.message || 'Error al guardar', 'error');
+                }
+            } catch (error) {
+                showAlert('Error de conexión', 'error');
+            }
+        });
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+
+        function showAlert(message, type) {
+            const alert = document.getElementById('alert');
+            alert.textContent = message;
+            alert.className = 'alert alert-' + type;
+            alert.style.display = 'block';
+            setTimeout(() => {
+                alert.style.display = 'none';
+            }, 5000);
+        }
+
+        async function logout() {
+            try {
+                await fetch('/logout', { method: 'POST' });
+                window.location.href = '/';
+            } catch (error) {
+                console.error('Error al cerrar sesión:', error);
+            }
+        }
+
+        // Cargar datos al iniciar
+        loadStats();
+
+        // Cerrar modal al hacer clic fuera
+        window.onclick = function(event) {
+            if (event.target.className === 'modal') {
+                event.target.style.display = 'none';
+            }
+        }
+    </script>
+</body>
+</html>

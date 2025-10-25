@@ -1,0 +1,1232 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Médico - Hospital Sanitas</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #F0F4F8;
+            color: #334155;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #4FC3F7 0%, #0288D1 100%);
+            color: white;
+            padding: 24px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 16px rgba(15, 118, 179, 0.15);
+        }
+
+        .header h1 {
+            font-weight: 600;
+            font-size: 26px;
+            letter-spacing: -0.5px;
+        }
+
+        .logout-btn {
+            background: rgba(255, 255, 255, 0.15);
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.4);
+            padding: 10px 24px;
+            border-radius: 24px;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 14px;
+            transition: all 0.3s ease-in-out;
+            backdrop-filter: blur(10px);
+        }
+
+        .logout-btn:hover {
+            background: white;
+            color: #0288D1;
+            border-color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(255, 255, 255, 0.3);
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 32px auto;
+            padding: 0 24px;
+        }
+
+        .welcome-card {
+            background: white;
+            padding: 32px;
+            border-radius: 16px;
+            box-shadow: 0 2px 8px rgba(15, 23, 42, 0.08);
+            margin-bottom: 32px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s ease-in-out;
+        }
+
+        .welcome-card:hover {
+            box-shadow: 0 8px 24px rgba(79, 195, 247, 0.15);
+        }
+
+        .welcome-card h2 {
+            color: #0288D1;
+            font-weight: 600;
+            font-size: 24px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #4FC3F7 0%, #0288D1 100%);
+            color: white;
+            border: none;
+            padding: 14px 28px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 15px;
+            transition: all 0.3s ease-in-out;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(79, 195, 247, 0.4);
+        }
+
+        .patients-table {
+            background: white;
+            padding: 32px;
+            border-radius: 16px;
+            box-shadow: 0 2px 8px rgba(15, 23, 42, 0.08);
+        }
+
+        .patients-table h2 {
+            color: #334155;
+            font-weight: 600;
+            margin-bottom: 24px;
+            font-size: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th {
+            background: linear-gradient(135deg, #4FC3F7 0%, #0288D1 100%);
+            color: white;
+            padding: 14px 16px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        th:first-child {
+            border-radius: 10px 0 0 0;
+        }
+
+        th:last-child {
+            border-radius: 0 10px 0 0;
+        }
+
+        td {
+            padding: 16px;
+            border-bottom: 1px solid #E2E8F0;
+            font-size: 14px;
+        }
+
+        tr {
+            transition: all 0.2s ease-in-out;
+        }
+
+        tr:hover {
+            background: #F8FAFC;
+        }
+
+        .btn-view {
+            background: #4FC3F7;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-right: 6px;
+            font-weight: 500;
+            font-size: 13px;
+            transition: all 0.3s ease-in-out;
+        }
+
+        .btn-view:hover {
+            background: #0288D1;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(79, 195, 247, 0.3);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(15, 23, 42, 0.6);
+            overflow-y: auto;
+            backdrop-filter: blur(4px);
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 50px auto;
+            padding: 36px;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 900px;
+            box-shadow: 0 20px 60px rgba(15, 23, 42, 0.3);
+            animation: slideUp 0.3s ease-in-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(30px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            padding-bottom: 20px;
+            border-bottom: 3px solid #E0F2FE;
+        }
+
+        .modal-header h2 {
+            color: #0288D1;
+            font-weight: 600;
+            font-size: 24px;
+        }
+
+        .close {
+            color: #94A3B8;
+            font-size: 32px;
+            font-weight: 300;
+            cursor: pointer;
+            transition: all 0.3s ease-in-out;
+            line-height: 1;
+        }
+
+        .close:hover {
+            color: #334155;
+            transform: rotate(90deg);
+        }
+
+        .history-tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+            border-bottom: 2px solid #E2E8F0;
+            padding-bottom: 12px;
+        }
+
+        .history-tab {
+            padding: 10px 20px;
+            background: #F8FAFC;
+            border: none;
+            border-radius: 8px 8px 0 0;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 13px;
+            color: #64748B;
+            transition: all 0.3s ease-in-out;
+        }
+
+        .history-tab:hover {
+            background: #E0F2FE;
+            color: #0288D1;
+        }
+
+        .history-tab.active {
+            background: linear-gradient(135deg, #4FC3F7 0%, #0288D1 100%);
+            color: white;
+            box-shadow: 0 2px 8px rgba(79, 195, 247, 0.3);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #334155;
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #E2E8F0;
+            border-radius: 10px;
+            font-size: 14px;
+            transition: all 0.3s ease-in-out;
+            font-family: inherit;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #4FC3F7;
+            box-shadow: 0 0 0 3px rgba(79, 195, 247, 0.1);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        .btn-submit {
+            background: linear-gradient(135deg, #4FC3F7 0%, #0288D1 100%);
+            color: white;
+            border: none;
+            padding: 14px 32px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 15px;
+            width: 100%;
+            margin-top: 12px;
+            transition: all 0.3s ease-in-out;
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(79, 195, 247, 0.4);
+        }
+
+        .alert {
+            padding: 16px 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            display: none;
+            align-items: center;
+            gap: 12px;
+            animation: slideInRight 0.4s ease-in-out;
+            position: fixed;
+            top: 24px;
+            right: 24px;
+            z-index: 2000;
+            min-width: 320px;
+            max-width: 420px;
+            box-shadow: 0 10px 40px rgba(15, 23, 42, 0.2);
+        }
+
+        @keyframes slideInRight {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .alert-success {
+            background: #ECFDF5;
+            color: #065F46;
+            border: 2px solid #10B981;
+        }
+
+        .alert-error {
+            background: #FEF2F2;
+            color: #991B1B;
+            border: 2px solid #EF4444;
+        }
+
+        .alert-icon {
+            width: 48px;
+            height: 48px;
+            flex-shrink: 0;
+        }
+
+        .checkmark-circle {
+            stroke-dasharray: 166;
+            stroke-dashoffset: 166;
+            stroke-width: 3;
+            stroke: #10B981;
+            fill: none;
+            animation: stroke 0.6s cubic-bezier(0.65, 0, 0.45, 1) forwards;
+        }
+
+        .checkmark-check {
+            transform-origin: 50% 50%;
+            stroke-dasharray: 48;
+            stroke-dashoffset: 48;
+            stroke: #10B981;
+            stroke-width: 3;
+            fill: none;
+            animation: stroke 0.3s cubic-bezier(0.65, 0, 0.45, 1) 0.5s forwards;
+        }
+
+        @keyframes stroke {
+            100% {
+                stroke-dashoffset: 0;
+            }
+        }
+
+        .error-circle {
+            stroke-dasharray: 166;
+            stroke-dashoffset: 166;
+            stroke-width: 3;
+            stroke: #EF4444;
+            fill: none;
+            animation: stroke 0.6s cubic-bezier(0.65, 0, 0.45, 1) forwards;
+        }
+
+        .error-x {
+            stroke-dasharray: 48;
+            stroke-dashoffset: 48;
+            stroke: #EF4444;
+            stroke-width: 3;
+            stroke-linecap: round;
+            fill: none;
+            animation: stroke 0.3s cubic-bezier(0.65, 0, 0.45, 1) 0.5s forwards;
+        }
+
+        .alert-message {
+            flex: 1;
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        .history-content {
+            display: none;
+        }
+
+        .history-content.active {
+            display: block;
+        }
+
+        .data-item {
+            background: #F8FAFC;
+            padding: 16px;
+            margin-bottom: 12px;
+            border-radius: 10px;
+            border-left: 4px solid #4FC3F7;
+            transition: all 0.3s ease-in-out;
+        }
+
+        .data-item:hover {
+            background: #EFF6FF;
+            transform: translateX(4px);
+        }
+
+        .item-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 12px;
+        }
+
+        .btn-edit {
+            background: #3B82F6;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 500;
+            transition: all 0.3s ease-in-out;
+        }
+
+        .btn-edit:hover {
+            background: #2563EB;
+            transform: translateY(-2px);
+        }
+
+        .btn-delete {
+            background: #EF4444;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 500;
+            transition: all 0.3s ease-in-out;
+        }
+
+        .btn-delete:hover {
+            background: #DC2626;
+            transform: translateY(-2px);
+        }
+
+        .btn-add-data {
+            background: #10B981;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 14px;
+            margin-bottom: 16px;
+            transition: all 0.3s ease-in-out;
+        }
+
+        .btn-add-data:hover {
+            background: #059669;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                padding: 20px 24px;
+            }
+
+            .container {
+                padding: 0 16px;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .history-tabs {
+                overflow-x: auto;
+            }
+
+            .alert {
+                right: 16px;
+                left: 16px;
+                min-width: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>👨‍⚕️ Dashboard Médico</h1>
+        <button class="logout-btn" onclick="logout()">Cerrar Sesión</button>
+    </div>
+
+    <div class="container">
+        <div class="welcome-card">
+            <div>
+                <h2 id="welcomeName">Bienvenido, Doctor</h2>
+                <p style="color: #64748B; margin-top: 8px;">Gestiona los historiales médicos de tus pacientes</p>
+            </div>
+            <button class="btn-primary" onclick="generatePatientPDF()">📄 Generar Reporte PDF</button>
+        </div>
+
+        <div class="patients-table">
+            <h2>📋 Pacientes Asignados</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Identificación</th>
+                        <th>Fecha Nacimiento</th>
+                        <th>Teléfono</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="patientsList"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Modal de Historia Médica -->
+    <div id="historyModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="patientName">Historia Médica</h2>
+                <span class="close" onclick="closeHistoryModal()">&times;</span>
+            </div>
+
+            <div class="history-tabs">
+                <button class="history-tab active" onclick="loadHistoryTab('alergias')">🌸 Alergias</button>
+                <button class="history-tab" onclick="loadHistoryTab('enfermedades')">🏥 Enfermedades</button>
+                <button class="history-tab" onclick="loadHistoryTab('medicamentos')">💊 Medicamentos</button>
+                <button class="history-tab" onclick="loadHistoryTab('cirugias')">⚕️ Cirugías</button>
+                <button class="history-tab" onclick="loadHistoryTab('vacunas')">💉 Vacunas</button>
+                <button class="history-tab" onclick="loadHistoryTab('habitos')">🚭 Hábitos</button>
+                <button class="history-tab" onclick="loadHistoryTab('antecedentes')">👨‍👩‍👧 Antecedentes</button>
+                <button class="history-tab" onclick="loadHistoryTab('archivos')">📎 Archivos</button>
+            </div>
+
+            <button class="btn-add-data" onclick="openAddDataModal()">➕ Agregar Información</button>
+
+            <div id="historyContent" class="history-content active"></div>
+        </div>
+    </div>
+
+    <!-- Modal para Agregar/Editar Datos -->
+    <div id="addDataModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="addDataTitle">Agregar Información</h2>
+                <span class="close" onclick="closeAddDataModal()">&times;</span>
+            </div>
+            <div id="addDataAlert" class="alert" style="position: relative; margin-bottom: 20px;"></div>
+            <form id="medicalDataForm" onsubmit="submitMedicalData(event)">
+                <div id="formFields"></div>
+                <button type="submit" class="btn-submit">Guardar</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="alert" class="alert"></div>
+
+    <script>
+        let currentPatientId = null;
+        let currentTab = 'alergias';
+        let editingId = null;
+        let editingType = null;
+
+        async function loadPatients() {
+            try {
+                const response = await fetch('/pacientes');
+                const data = await response.json();
+                
+                if (data.success) {
+                    renderPatients(data.pacientes);
+                }
+            } catch (error) {
+                showAlert('Error al cargar pacientes', 'error');
+            }
+        }
+
+        function renderPatients(patients) {
+            const tbody = document.getElementById('patientsList');
+            tbody.innerHTML = patients.map(p => `
+                <tr>
+                    <td>${p.nombres} ${p.apellidos}</td>
+                    <td>${p.identificacion}</td>
+                    <td>${p.fecha_nacimiento}</td>
+                    <td>${p.telefono || '-'}</td>
+                    <td>
+                        <button class="btn-view" onclick="viewPatientHistory(${p.id}, '${p.nombres} ${p.apellidos}')">
+                            📋 Ver Historia
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function viewPatientHistory(patientId, patientName) {
+            currentPatientId = patientId;
+            document.getElementById('patientName').textContent = `Historia de ${patientName}`;
+            document.getElementById('historyModal').style.display = 'block';
+            loadHistoryTab('alergias');
+        }
+
+        async function loadHistoryTab(tab) {
+            currentTab = tab;
+            editingId = null;
+            editingType = null;
+            
+            document.querySelectorAll('.history-tab').forEach(t => t.classList.remove('active'));
+            event.target.classList.add('active');
+
+            const content = document.getElementById('historyContent');
+            content.innerHTML = '<p style="text-align: center; padding: 20px;">Cargando...</p>';
+
+            try {
+                const endpoint = tab === 'antecedentes' ? 'antecedentes-familiares' : tab;
+                const response = await fetch(`/api/medico/pacientes/${currentPatientId}/${endpoint}`);
+                const data = await response.json();
+
+                if (data.success) {
+                    renderHistoryData(tab, data[tab] || data.antecedentes_familiares || []);
+                } else {
+                    content.innerHTML = '<p style="color: #64748B;">No hay información disponible</p>';
+                }
+            } catch (error) {
+                content.innerHTML = '<p style="color: #EF4444;">Error al cargar datos</p>';
+            }
+        }
+
+        function renderHistoryData(tab, data) {
+            const content = document.getElementById('historyContent');
+            
+            if (!data || data.length === 0) {
+                content.innerHTML = '<p style="color: #64748B;">No hay información registrada</p>';
+                return;
+            }
+
+            let html = '';
+            data.forEach(item => {
+                html += `<div class="data-item">`;
+                html += renderItemDetails(tab, item);
+                html += `<div class="item-actions">
+                            <button class="btn-edit" onclick="editItem('${tab}', ${item.id})">✏️ Editar</button>
+                            <button class="btn-delete" onclick="deleteItem('${tab}', ${item.id})">🗑️ Eliminar</button>
+                        </div>`;
+                html += `</div>`;
+            });
+
+            content.innerHTML = html;
+
+            if (tab === 'alergias') window.alergiasData = data;
+            else if (tab === 'enfermedades') window.enfermedadesData = data;
+            else if (tab === 'medicamentos') window.medicamentosData = data;
+            else if (tab === 'cirugias') window.cirugiasData = data;
+            else if (tab === 'vacunas') window.vacunasData = data;
+            else if (tab === 'habitos') window.habitosData = data;
+            else if (tab === 'antecedentes') window.antecedentesData = data;
+        }
+
+        function renderItemDetails(tab, item) {
+            let html = '';
+            
+            switch(tab) {
+                case 'alergias':
+                    html = `<strong style="color: #4FC3F7;">Alergia:</strong> ${item.nombre}<br>
+                            <strong>Tipo:</strong> ${item.tipo || '-'}<br>
+                            <strong>Severidad:</strong> ${item.severidad || '-'}<br>
+                            <strong>Reacción:</strong> ${item.reaccion || '-'}`;
+                    break;
+                case 'enfermedades':
+                    html = `<strong style="color: #4FC3F7;">Enfermedad:</strong> ${item.nombre}<br>
+                            <strong>Estado:</strong> ${item.estado || '-'}<br>
+                            <strong>Diagnóstico:</strong> ${item.fecha_diagnostico || '-'}`;
+                    break;
+                case 'medicamentos':
+                    html = `<strong style="color: #4FC3F7;">Medicamento:</strong> ${item.nombre}<br>
+                            <strong>Dosis:</strong> ${item.dosis || '-'}<br>
+                            <strong>Frecuencia:</strong> ${item.frecuencia || '-'}`;
+                    break;
+                case 'cirugias':
+                    html = `<strong style="color: #4FC3F7;">Cirugía:</strong> ${item.nombre}<br>
+                            <strong>Fecha:</strong> ${item.fecha_cirugia || '-'}<br>
+                            <strong>Hospital:</strong> ${item.hospital || '-'}`;
+                    break;
+                case 'vacunas':
+                    html = `<strong style="color: #4FC3F7;">Vacuna:</strong> ${item.nombre}<br>
+                            <strong>Fecha:</strong> ${item.fecha_aplicacion || '-'}<br>
+                            <strong>Próxima dosis:</strong> ${item.proxima_dosis || '-'}`;
+                    break;
+                case 'habitos':
+                    html = `<strong style="color: #4FC3F7;">Hábito:</strong> ${item.tipo}<br>
+                            <strong>Descripción:</strong> ${item.descripcion || '-'}<br>
+                            <strong>Frecuencia:</strong> ${item.frecuencia || '-'}`;
+                    break;
+                case 'antecedentes':
+                    html = `<strong style="color: #4FC3F7;">Parentesco:</strong> ${item.parentesco}<br>
+                            <strong>Enfermedad:</strong> ${item.enfermedad}<br>
+                            <strong>Estado:</strong> ${item.estado || '-'}`;
+                    break;
+            }
+            
+            return html;
+        }
+
+        function openAddDataModal() {
+            editingId = null;
+            editingType = null;
+            const titles = {
+                'alergias': 'Agregar Alergia',
+                'enfermedades': 'Agregar Enfermedad',
+                'medicamentos': 'Agregar Medicamento',
+                'cirugias': 'Agregar Cirugía',
+                'vacunas': 'Agregar Vacuna',
+                'habitos': 'Agregar Hábito',
+                'antecedentes': 'Agregar Antecedente Familiar',
+                'archivos': 'Subir Archivo'
+            };
+
+            document.getElementById('addDataTitle').textContent = titles[currentTab];
+            document.getElementById('formFields').innerHTML = getFormFieldsForTab(currentTab);
+            document.getElementById('addDataModal').style.display = 'block';
+        }
+
+        function getFormFieldsForTab(tab, data = {}) {
+            if (tab === 'alergias') {
+                return `
+                    <div class="form-group">
+                        <label>Nombre de la Alergia *</label>
+                        <input type="text" name="nombre" value="${data.nombre || ""}" required>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Tipo</label>
+                            <select name="tipo">
+                                <option value="">Seleccionar...</option>
+                                <option value="Medicamento" ${data.tipo === "Medicamento" ? "selected" : ""}>Medicamento</option>
+                                <option value="Alimento" ${data.tipo === "Alimento" ? "selected" : ""}>Alimento</option>
+                                <option value="Ambiental" ${data.tipo === "Ambiental" ? "selected" : ""}>Ambiental</option>
+                                <option value="Otra" ${data.tipo === "Otra" ? "selected" : ""}>Otra</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Severidad</label>
+                            <select name="severidad">
+                                <option value="">Seleccionar...</option>
+                                <option value="Leve" ${data.severidad === "Leve" ? "selected" : ""}>Leve</option>
+                                <option value="Moderada" ${data.severidad === "Moderada" ? "selected" : ""}>Moderada</option>
+                                <option value="Severa" ${data.severidad === "Severa" ? "selected" : ""}>Severa</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Reacción</label>
+                        <input type="text" name="reaccion" value="${data.reaccion || ""}">
+                    </div>
+                    <div class="form-group">
+                        <label>Fecha de Diagnóstico</label>
+                        <input type="date" name="fecha_diagnostico" value="${data.fecha_diagnostico || ""}">
+                    </div>
+                    <div class="form-group">
+                        <label>Notas</label>
+                        <textarea name="notas">${data.notas || ""}</textarea>
+                    </div>
+                `;
+            } else if (tab === 'enfermedades') {
+                return `
+                    <div class="form-group">
+                        <label>Nombre de la Enfermedad *</label>
+                        <input type="text" name="nombre" value="${data.nombre || ""}" required>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Estado</label>
+                            <select name="estado">
+                                <option value="">Seleccionar...</option>
+                                <option value="Activo" ${data.estado === "Activo" ? "selected" : ""}>Activo</option>
+                                <option value="Inactivo" ${data.estado === "Inactivo" ? "selected" : ""}>Inactivo</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Fecha de Diagnóstico</label>
+                            <input type="date" name="fecha_diagnostico" value="${data.fecha_diagnostico || ""}">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Tratamiento</label>
+                        <textarea name="tratamiento">${data.tratamiento || ""}</textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Notas</label>
+                        <textarea name="notas">${data.notas || ""}</textarea>
+                    </div>
+                `;
+            } else if (tab === 'medicamentos') {
+                return `
+                    <div class="form-group">
+                        <label>Nombre del Medicamento *</label>
+                        <input type="text" name="nombre" value="${data.nombre || ""}" required>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Dosis</label>
+                            <input type="text" name="dosis" value="${data.dosis || ""}">
+                        </div>
+                        <div class="form-group">
+                            <label>Frecuencia</label>
+                            <input type="text" name="frecuencia" value="${data.frecuencia || ""}">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Vía de Administración</label>
+                        <input type="text" name="via_administracion" value="${data.via_administracion || ""}">
+                    </div>
+                    <div class="form-group">
+                        <label>Fecha de Inicio</label>
+                        <input type="date" name="fecha_inicio" value="${data.fecha_inicio || ""}">
+                    </div>
+                    <div class="form-group">
+                        <label>Notas</label>
+                        <textarea name="notas">${data.notas || ""}</textarea>
+                    </div>
+                `;
+            } else if (tab === 'cirugias') {
+                return `
+                    <div class="form-group">
+                        <label>Nombre de la Cirugía *</label>
+                        <input type="text" name="nombre" value="${data.nombre || ""}" required>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Fecha de la Cirugía</label>
+                            <input type="date" name="fecha_cirugia" value="${data.fecha_cirugia || ""}">
+                        </div>
+                        <div class="form-group">
+                            <label>Hospital</label>
+                            <input type="text" name="hospital" value="${data.hospital || ""}">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Cirujano</label>
+                        <input type="text" name="cirujano" value="${data.cirujano || ""}">
+                    </div>
+                    <div class="form-group">
+                        <label>Complicaciones</label>
+                        <textarea name="complicaciones">${data.complicaciones || ""}</textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Notas</label>
+                        <textarea name="notas">${data.notas || ""}</textarea>
+                    </div>
+                `;
+            } else if (tab === 'vacunas') {
+                return `
+                    <div class="form-group">
+                        <label>Nombre de la Vacuna *</label>
+                        <input type="text" name="nombre" value="${data.nombre || ""}" required>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Fecha de Aplicación</label>
+                            <input type="date" name="fecha_aplicacion" value="${data.fecha_aplicacion || ""}">
+                        </div>
+                        <div class="form-group">
+                            <label>Dosis</label>
+                            <input type="text" name="dosis" value="${data.dosis || ""}">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Próxima Dosis</label>
+                        <input type="date" name="proxima_dosis" value="${data.proxima_dosis || ""}">
+                    </div>
+                `;
+            } else if (tab === 'habitos') {
+                return `
+                    <div class="form-group">
+                        <label>Tipo de Hábito *</label>
+                        <input type="text" name="tipo" value="${data.tipo || ""}" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Descripción</label>
+                        <textarea name="descripcion">${data.descripcion || ""}</textarea>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Frecuencia</label>
+                            <input type="text" name="frecuencia" value="${data.frecuencia || ""}">
+                        </div>
+                        <div class="form-group">
+                            <label>Fecha de Inicio</label>
+                            <input type="date" name="fecha_inicio" value="${data.fecha_inicio || ""}">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Notas</label>
+                        <textarea name="notas">${data.notas || ""}</textarea>
+                    </div>
+                `;
+            } else if (tab === 'antecedentes') {
+                return `
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Parentesco *</label>
+                            <select name="parentesco" required>
+                                <option value="">Seleccionar...</option>
+                                <option value="Padre" ${data.parentesco === "Padre" ? "selected" : ""}>Padre</option>
+                                <option value="Madre" ${data.parentesco === "Madre" ? "selected" : ""}>Madre</option>
+                                <option value="Hermano" ${data.parentesco === "Hermano" ? "selected" : ""}>Hermano</option>
+                                <option value="Hermana" ${data.parentesco === "Hermana" ? "selected" : ""}>Hermana</option>
+                                <option value="Abuelo" ${data.parentesco === "Abuelo" ? "selected" : ""}>Abuelo</option>
+                                <option value="Abuela" ${data.parentesco === "Abuela" ? "selected" : ""}>Abuela</option>
+                                <option value="Tío" ${data.parentesco === "Tío" ? "selected" : ""}>Tío</option>
+                                <option value="Tía" ${data.parentesco === "Tía" ? "selected" : ""}>Tía</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Enfermedad *</label>
+                            <input type="text" name="enfermedad" value="${data.enfermedad || ""}" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Edad de Diagnóstico</label>
+                            <input type="number" name="edad_diagnostico" value="${data.edad_diagnostico || ""}" min="0" max="120">
+                        </div>
+                        <div class="form-group">
+                            <label>Estado</label>
+                            <select name="estado">
+                                <option value="">Seleccionar...</option>
+                                <option value="Vivo" ${data.estado === "Vivo" ? "selected" : ""}>Vivo</option>
+                                <option value="Fallecido" ${data.estado === "Fallecido" ? "selected" : ""}>Fallecido</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Notas</label>
+                        <textarea name="notas">${data.notas || ""}</textarea>
+                    </div>
+                `;
+            } else if (tab === 'archivos') {
+                return `
+                    <div class="form-group">
+                        <label>Archivo *</label>
+                        <input type="file" name="archivo" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Categoría</label>
+                        <select name="categoria">
+                            <option value="laboratorio">Laboratorio</option>
+                            <option value="imagen">Imagen/Radiografía</option>
+                            <option value="receta">Receta</option>
+                            <option value="informe">Informe</option>
+                            <option value="otros">Otros</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Descripción</label>
+                        <textarea name="descripcion"></textarea>
+                    </div>
+                `;
+            }
+            
+            return '';
+        }
+
+        async function submitMedicalData(event) {
+            event.preventDefault();
+            
+            const endpoint = currentTab === 'antecedentes' ? 'antecedentes-familiares' : currentTab;
+            const alert = document.getElementById('addDataAlert');
+
+            try {
+                let response;
+                let method = 'POST';
+                let url = '';
+                
+                if (editingId && editingType) {
+                    method = 'PUT';
+                    url = `/api/medico/${editingType}/${editingId}`;
+                } else if (currentTab === 'archivos') {
+                    const formData = new FormData(event.target);
+                    response = await fetch(`/pacientes/${currentPatientId}/archivos`, {
+                        method: 'POST',
+                        body: formData
+                    });
+                } else {
+                    url = `/api/medico/pacientes/${currentPatientId}/${endpoint}`;
+                }
+                
+                if (!response) {
+                    const formData = new FormData(event.target);
+                    const data = Object.fromEntries(formData.entries());
+                    
+                    response = await fetch(url, {
+                        method: method,
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(data)
+                    });
+                }
+
+                const result = await response.json();
+
+                if (result.success) {
+                    const iconHTML = `<svg class="alert-icon" viewBox="0 0 52 52">
+                                       <circle class="checkmark-circle" cx="26" cy="26" r="25"/>
+                                       <path class="checkmark-check" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
+                                   </svg>`;
+                    alert.innerHTML = iconHTML + `<span class="alert-message">${editingId ? 'Información actualizada exitosamente' : 'Información agregada exitosamente'}</span>`;
+                    alert.className = 'alert alert-success';
+                    alert.style.display = 'flex';
+                    
+                    setTimeout(() => {
+                        closeAddDataModal();
+                        loadHistoryTab(currentTab);
+                    }, 1500);
+                } else {
+                    const iconHTML = `<svg class="alert-icon" viewBox="0 0 52 52">
+                                       <circle class="error-circle" cx="26" cy="26" r="25"/>
+                                       <line class="error-x" x1="18" y1="18" x2="34" y2="34"/>
+                                       <line class="error-x" x1="34" y1="18" x2="18" y2="34"/>
+                                   </svg>`;
+                    alert.innerHTML = iconHTML + `<span class="alert-message">${result.message}</span>`;
+                    alert.className = 'alert alert-error';
+                    alert.style.display = 'flex';
+                }
+            } catch (error) {
+                const iconHTML = `<svg class="alert-icon" viewBox="0 0 52 52">
+                                   <circle class="error-circle" cx="26" cy="26" r="25"/>
+                                   <line class="error-x" x1="18" y1="18" x2="34" y2="34"/>
+                                   <line class="error-x" x1="34" y1="18" x2="18" y2="34"/>
+                               </svg>`;
+                alert.innerHTML = iconHTML + '<span class="alert-message">Error de conexión</span>';
+                alert.className = 'alert alert-error';
+                alert.style.display = 'flex';
+            }
+        }
+
+        async function editItem(type, id) {
+            editingId = id;
+            editingType = type;
+            
+            let item = null;
+            if (type === 'alergias' && window.alergiasData) {
+                item = window.alergiasData.find(a => a.id === id);
+            } else if (type === 'enfermedades' && window.enfermedadesData) {
+                item = window.enfermedadesData.find(e => e.id === id);
+            } else if (type === 'medicamentos' && window.medicamentosData) {
+                item = window.medicamentosData.find(m => m.id === id);
+            } else if (type === 'cirugias' && window.cirugiasData) {
+                item = window.cirugiasData.find(c => c.id === id);
+            } else if (type === 'vacunas' && window.vacunasData) {
+                item = window.vacunasData.find(v => v.id === id);
+            } else if (type === 'habitos' && window.habitosData) {
+                item = window.habitosData.find(h => h.id === id);
+            } else if (type === 'antecedentes' && window.antecedentesData) {
+                item = window.antecedentesData.find(a => a.id === id);
+            }
+            
+            if (!item) {
+                showAlert('No se pudo encontrar el registro', 'error');
+                return;
+            }
+            
+            const modal = document.getElementById('addDataModal');
+            const title = document.getElementById('addDataTitle');
+            const formFields = document.getElementById('formFields');
+            
+            const titles = {
+                'alergias': 'Editar Alergia',
+                'enfermedades': 'Editar Enfermedad',
+                'medicamentos': 'Editar Medicamento',
+                'cirugias': 'Editar Cirugía',
+                'vacunas': 'Editar Vacuna',
+                'habitos': 'Editar Hábito',
+                'antecedentes': 'Editar Antecedente Familiar'
+            };
+            
+            title.textContent = titles[type];
+            formFields.innerHTML = getFormFieldsForTab(type, item);
+            modal.style.display = 'block';
+        }
+
+        async function deleteItem(type, id) {
+            const confirmMessages = {
+                'alergias': '¿Eliminar esta alergia del historial médico?',
+                'enfermedades': '¿Eliminar esta enfermedad del historial?',
+                'cirugias': '¿Eliminar esta cirugía del historial?',
+                'medicamentos': '¿Eliminar este medicamento del historial?',
+                'vacunas': '¿Eliminar esta vacuna del historial?',
+                'habitos': '¿Eliminar este hábito del historial?',
+                'antecedentes': '¿Eliminar este antecedente familiar del historial?'
+            };
+            
+            if (!confirm(confirmMessages[type] || '¿Estás seguro de que deseas eliminar este registro?')) {
+                return;
+            }
+            
+            try {
+                const response = await fetch(`/api/medico/${type}/${id}`, {
+                    method: 'DELETE'
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    showAlert('Registro eliminado exitosamente', 'success');
+                    await loadHistoryTab(currentTab);
+                } else {
+                    showAlert('Error al eliminar: ' + result.message, 'error');
+                }
+            } catch (error) {
+                showAlert('Error al eliminar el registro', 'error');
+            }
+        }
+
+        async function generatePatientPDF() {
+            if (!currentPatientId) {
+                showAlert('No hay paciente seleccionado', 'error');
+                return;
+            }
+            window.location.href = `/api/medico/pacientes/${currentPatientId}/pdf`;
+        }
+
+        function closeHistoryModal() {
+            document.getElementById('historyModal').style.display = 'none';
+        }
+
+        function closeAddDataModal() {
+            document.getElementById('addDataModal').style.display = 'none';
+            document.getElementById('addDataAlert').style.display = 'none';
+        }
+
+        function showAlert(message, type) {
+            const alert = document.getElementById('alert');
+            const iconHTML = type === 'success' 
+                ? `<svg class="alert-icon" viewBox="0 0 52 52">
+                       <circle class="checkmark-circle" cx="26" cy="26" r="25"/>
+                       <path class="checkmark-check" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
+                   </svg>`
+                : `<svg class="alert-icon" viewBox="0 0 52 52">
+                       <circle class="error-circle" cx="26" cy="26" r="25"/>
+                       <line class="error-x" x1="18" y1="18" x2="34" y2="34"/>
+                       <line class="error-x" x1="34" y1="18" x2="18" y2="34"/>
+                   </svg>`;
+            
+            alert.innerHTML = iconHTML + `<span class="alert-message">${message}</span>`;
+            alert.className = 'alert alert-' + type;
+            alert.style.display = 'flex';
+            
+            setTimeout(() => {
+                alert.style.display = 'none';
+            }, 5000);
+        }
+
+        async function logout() {
+            try {
+                await fetch('/logout', { method: 'POST' });
+                window.location.href = '/';
+            } catch (error) {
+                console.error('Error al cerrar sesión:', error);
+            }
+        }
+
+        window.onclick = function(event) {
+            if (event.target.classList.contains('modal')) {
+                event.target.style.display = 'none';
+            }
+        }
+
+        loadPatients();
+    </script>
+</body>
+</html>

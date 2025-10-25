@@ -1,0 +1,817 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro - Hospital Sanitas</title>
+    <style>
+        :root {
+            /* Paleta de colores celeste médico profesional */
+            --primary-blue: #4A90E2;
+            --primary-blue-dark: #357ABD;
+            --primary-blue-light: #6BA5E7;
+            --accent-teal: #5CB8B2;
+            --background-light: #F8FAFB;
+            --white: #FFFFFF;
+            --gray-light: #E8ECF0;
+            --gray-medium: #B0BEC5;
+            --gray-dark: #546E7A;
+            --text-primary: #263238;
+            --text-secondary: #607D8B;
+            --success: #4CAF50;
+            --error: #E57373;
+            --warning: #FFA726;
+            --shadow-sm: 0 2px 8px rgba(74, 144, 226, 0.08);
+            --shadow-md: 0 4px 16px rgba(74, 144, 226, 0.12);
+            --shadow-lg: 0 8px 32px rgba(74, 144, 226, 0.16);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #E3F2FD 0%, #B3E5FC 50%, #81D4FA 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Fondo animado sutil */
+        body::before {
+            content: '';
+            position: absolute;
+            width: 800px;
+            height: 800px;
+            background: radial-gradient(circle, rgba(74, 144, 226, 0.1) 0%, transparent 70%);
+            top: -200px;
+            right: -200px;
+            animation: float 20s ease-in-out infinite;
+            z-index: 0;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0); }
+            50% { transform: translate(30px, 30px); }
+        }
+
+        .register-container {
+            background: var(--white);
+            border-radius: 24px;
+            box-shadow: var(--shadow-lg);
+            width: 100%;
+            max-width: 920px;
+            overflow: hidden;
+            animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+            position: relative;
+            z-index: 1;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(40px) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .register-header {
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--accent-teal) 100%);
+            color: var(--white);
+            padding: 48px 40px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .register-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+            opacity: 0.5;
+        }
+
+        .register-header .logo {
+            font-size: 56px;
+            margin-bottom: 16px;
+            display: inline-block;
+            animation: pulse 2s ease-in-out infinite;
+            position: relative;
+            z-index: 1;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .register-header h1 {
+            font-size: 32px;
+            margin-bottom: 8px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .register-header p {
+            font-size: 15px;
+            opacity: 0.92;
+            font-weight: 400;
+            position: relative;
+            z-index: 1;
+        }
+
+        .register-body {
+            padding: 40px;
+        }
+
+        .form-section {
+            margin-bottom: 36px;
+            animation: fadeIn 0.5s ease-out forwards;
+            opacity: 0;
+        }
+
+        .form-section:nth-child(1) { animation-delay: 0.1s; }
+        .form-section:nth-child(2) { animation-delay: 0.2s; }
+        .form-section:nth-child(3) { animation-delay: 0.3s; }
+        .form-section:nth-child(4) { animation-delay: 0.4s; }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .section-title {
+            font-size: 20px;
+            color: var(--primary-blue);
+            margin-bottom: 24px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid var(--gray-light);
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            letter-spacing: -0.3px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+
+        .form-group label {
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: var(--text-primary);
+            font-size: 14px;
+            letter-spacing: 0.2px;
+        }
+
+        .form-group label .required {
+            color: var(--error);
+            margin-left: 4px;
+            font-weight: 700;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            padding: 14px 16px;
+            border: 2px solid var(--gray-light);
+            border-radius: 12px;
+            font-size: 15px;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            font-family: inherit;
+            background: var(--background-light);
+            color: var(--text-primary);
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--primary-blue);
+            background: var(--white);
+            box-shadow: 0 0 0 4px rgba(74, 144, 226, 0.08);
+            transform: translateY(-1px);
+        }
+
+        .form-group input::placeholder,
+        .form-group textarea::placeholder {
+            color: var(--gray-medium);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+            line-height: 1.6;
+        }
+
+        .form-group input[type="date"] {
+            cursor: pointer;
+        }
+
+        .form-group select {
+            cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L6 6L11 1' stroke='%234A90E2' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 16px center;
+            padding-right: 40px;
+        }
+
+        .helper-text {
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-top: 6px;
+            line-height: 1.4;
+        }
+
+        .password-strength {
+            margin-top: 8px;
+            font-size: 13px;
+            height: 20px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .strength-weak {
+            color: var(--error);
+        }
+
+        .strength-medium {
+            color: var(--warning);
+        }
+
+        .strength-strong {
+            color: var(--success);
+        }
+
+        /* Sistema de alertas mejorado */
+        .alert {
+            padding: 16px 20px;
+            border-radius: 12px;
+            margin-bottom: 24px;
+            display: none;
+            animation: slideInAlert 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        @keyframes slideInAlert {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .alert::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+        }
+
+        .alert-success {
+            background: linear-gradient(135deg, #E8F5E9 0%, #C8E6C9 100%);
+            border: 1px solid #A5D6A7;
+            color: #2E7D32;
+        }
+
+        .alert-success::before {
+            background: var(--success);
+        }
+
+        .alert-error {
+            background: linear-gradient(135deg, #FFEBEE 0%, #FFCDD2 100%);
+            border: 1px solid #EF9A9A;
+            color: #C62828;
+        }
+
+        .alert-error::before {
+            background: var(--error);
+        }
+
+        /* Icono de feedback animado */
+        .alert-icon {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            margin-right: 8px;
+            vertical-align: middle;
+            position: relative;
+        }
+
+        .alert-success .alert-icon::before {
+            content: '✓';
+            position: absolute;
+            color: var(--success);
+            font-size: 16px;
+            font-weight: bold;
+            animation: checkmark 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        @keyframes checkmark {
+            0% {
+                transform: scale(0) rotate(-45deg);
+                opacity: 0;
+            }
+            50% {
+                transform: scale(1.2) rotate(0deg);
+            }
+            100% {
+                transform: scale(1) rotate(0deg);
+                opacity: 1;
+            }
+        }
+
+        .alert-error .alert-icon::before {
+            content: '✕';
+            position: absolute;
+            color: var(--error);
+            font-size: 16px;
+            font-weight: bold;
+            animation: errormark 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        @keyframes errormark {
+            0% {
+                transform: scale(0) rotate(90deg);
+                opacity: 0;
+            }
+            50% {
+                transform: scale(1.2) rotate(0deg);
+            }
+            100% {
+                transform: scale(1) rotate(0deg);
+                opacity: 1;
+            }
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-blue-dark) 100%);
+            color: var(--white);
+            border: none;
+            padding: 16px 40px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            width: 100%;
+            margin-top: 24px;
+            box-shadow: 0 4px 12px rgba(74, 144, 226, 0.24);
+            letter-spacing: 0.3px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-primary::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn-primary:hover::before {
+            left: 100%;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(74, 144, 226, 0.32);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 8px rgba(74, 144, 226, 0.24);
+        }
+
+        .btn-primary:disabled {
+            background: var(--gray-light);
+            color: var(--gray-medium);
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .login-link {
+            text-align: center;
+            margin-top: 28px;
+            padding-top: 28px;
+            border-top: 1px solid var(--gray-light);
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        .login-link a {
+            color: var(--primary-blue);
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .login-link a::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--primary-blue);
+            transition: width 0.3s ease;
+        }
+
+        .login-link a:hover {
+            color: var(--primary-blue-dark);
+        }
+
+        .login-link a:hover::after {
+            width: 100%;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 32px 20px;
+        }
+
+        .loading.active {
+            display: block;
+        }
+
+        .spinner {
+            width: 48px;
+            height: 48px;
+            margin: 0 auto 20px;
+            position: relative;
+        }
+
+        .spinner::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border: 4px solid var(--gray-light);
+            border-radius: 50%;
+        }
+
+        .spinner::after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border: 4px solid transparent;
+            border-top-color: var(--primary-blue);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading p {
+            color: var(--text-secondary);
+            font-size: 15px;
+            font-weight: 500;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .register-header {
+                padding: 40px 30px;
+            }
+
+            .register-header h1 {
+                font-size: 26px;
+            }
+
+            .register-header .logo {
+                font-size: 48px;
+            }
+
+            .register-body {
+                padding: 30px 24px;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .form-group.full-width {
+                grid-column: 1;
+            }
+        }
+
+        /* Accesibilidad */
+        *:focus-visible {
+            outline: 2px solid var(--primary-blue);
+            outline-offset: 2px;
+        }
+    </style>
+</head>
+<body>
+    <div class="register-container">
+        <div class="register-header">
+            <div class="logo">🏥</div>
+            <h1>Hospital Sanitas</h1>
+            <p>Registro de Nuevo Paciente</p>
+        </div>
+
+        <div class="register-body">
+            <div id="alert" class="alert"></div>
+
+            <div class="loading" id="loading">
+                <div class="spinner"></div>
+                <p>Registrando tu cuenta...</p>
+            </div>
+
+            <form id="registerForm" style="display: block;">
+                <!-- Datos de Cuenta -->
+                <div class="form-section">
+                    <h3 class="section-title">🔐 Datos de Cuenta</h3>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Email <span class="required">*</span></label>
+                            <input type="email" name="email" id="email" required 
+                                   placeholder="correo@ejemplo.com">
+                            <span class="helper-text">Usarás este email para iniciar sesión</span>
+                        </div>
+                        <div class="form-group">
+                            <label>Contraseña <span class="required">*</span></label>
+                            <input type="password" name="contrasena" id="contrasena" required 
+                                   placeholder="Mínimo 6 caracteres" minlength="6">
+                            <div id="passwordStrength" class="password-strength"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Información Personal -->
+                <div class="form-section">
+                    <h3 class="section-title">👤 Información Personal</h3>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Nombres <span class="required">*</span></label>
+                            <input type="text" name="nombres" required placeholder="Ej: Juan Carlos">
+                        </div>
+                        <div class="form-group">
+                            <label>Apellidos <span class="required">*</span></label>
+                            <input type="text" name="apellidos" required placeholder="Ej: García López">
+                        </div>
+                        <div class="form-group">
+                            <label>Identificación (DPI/CUI) <span class="required">*</span></label>
+                            <input type="text" name="identificacion" required 
+                                   placeholder="Ej: 1234567890101" maxlength="13">
+                            <span class="helper-text">13 dígitos</span>
+                        </div>
+                        <div class="form-group">
+                            <label>Fecha de Nacimiento <span class="required">*</span></label>
+                            <input type="date" name="fecha_nacimiento" required>
+                            <span class="helper-text">Debes ser mayor de 18 años</span>
+                        </div>
+                        <div class="form-group">
+                            <label>Género</label>
+                            <select name="genero">
+                                <option value="">Seleccionar...</option>
+                                <option value="Masculino">Masculino</option>
+                                <option value="Femenino">Femenino</option>
+                                <option value="Otro">Otro</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Teléfono</label>
+                            <input type="tel" name="telefono" placeholder="Ej: 12345678">
+                        </div>
+                        <div class="form-group full-width">
+                            <label>Dirección</label>
+                            <textarea name="direccion" placeholder="Calle, avenida, zona, municipio, departamento"></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Contacto de Emergencia -->
+                <div class="form-section">
+                    <h3 class="section-title">🚨 Contacto de Emergencia</h3>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Nombre Completo</label>
+                            <input type="text" name="contacto_emergencia_nombre" 
+                                   placeholder="Ej: María García">
+                        </div>
+                        <div class="form-group">
+                            <label>Teléfono</label>
+                            <input type="tel" name="contacto_emergencia_telefono" 
+                                   placeholder="Ej: 87654321">
+                        </div>
+                        <div class="form-group">
+                            <label>Relación</label>
+                            <select name="contacto_emergencia_relacion">
+                                <option value="">Seleccionar...</option>
+                                <option value="Madre">Madre</option>
+                                <option value="Padre">Padre</option>
+                                <option value="Hermano/a">Hermano/a</option>
+                                <option value="Hijo/a">Hijo/a</option>
+                                <option value="Cónyuge">Cónyuge</option>
+                                <option value="Amigo/a">Amigo/a</option>
+                                <option value="Otro">Otro</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-primary" id="submitBtn">
+                    Registrarse
+                </button>
+
+                <div class="login-link">
+                    ¿Ya tienes una cuenta? <a href="/">Inicia sesión aquí</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Validación de fortaleza de contraseña
+        document.getElementById('contrasena').addEventListener('input', function(e) {
+            const password = e.target.value;
+            const strengthDiv = document.getElementById('passwordStrength');
+            
+            if (password.length === 0) {
+                strengthDiv.textContent = '';
+                return;
+            }
+            
+            let strength = 0;
+            if (password.length >= 6) strength++;
+            if (password.length >= 10) strength++;
+            if (/[a-z]/.test(password) && /[A-Z]/.test(password)) strength++;
+            if (/[0-9]/.test(password)) strength++;
+            if (/[^a-zA-Z0-9]/.test(password)) strength++;
+            
+            strengthDiv.className = 'password-strength';
+            
+            if (strength <= 2) {
+                strengthDiv.textContent = '⚠️ Contraseña débil';
+                strengthDiv.classList.add('strength-weak');
+            } else if (strength <= 3) {
+                strengthDiv.textContent = '⚡ Contraseña media';
+                strengthDiv.classList.add('strength-medium');
+            } else {
+                strengthDiv.textContent = '✓ Contraseña fuerte';
+                strengthDiv.classList.add('strength-strong');
+            }
+        });
+
+        // Validación de identificación (solo números y longitud de 13)
+        document.querySelector('input[name="identificacion"]').addEventListener('input', function(e) {
+            e.target.value = e.target.value.replace(/[^0-9]/g, '');
+        });
+
+        // Validación de teléfono (solo números)
+        document.querySelectorAll('input[type="tel"]').forEach(input => {
+            input.addEventListener('input', function(e) {
+                e.target.value = e.target.value.replace(/[^0-9]/g, '');
+            });
+        });
+
+        // Manejo del formulario
+        document.getElementById('registerForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const form = e.target;
+            const formData = new FormData(form);
+            const data = Object.fromEntries(formData.entries());
+
+            // Validaciones adicionales
+            if (!data.email || !data.contrasena || !data.nombres || !data.apellidos || 
+                !data.identificacion || !data.fecha_nacimiento) {
+                showAlert('Por favor completa todos los campos obligatorios (*)', 'error');
+                return;
+            }
+
+            if (data.identificacion.length !== 13) {
+                showAlert('La identificación (DPI/CUI) debe tener 13 dígitos', 'error');
+                return;
+            }
+
+            // Validar que sea mayor de edad (18 años)
+            const birthDate = new Date(data.fecha_nacimiento);
+            const today = new Date();
+            const age = today.getFullYear() - birthDate.getFullYear();
+            const monthDiff = today.getMonth() - birthDate.getMonth();
+            
+            if (age < 18 || (age === 18 && monthDiff < 0)) {
+                showAlert('Debes ser mayor de 18 años para registrarte', 'error');
+                return;
+            }
+
+            // Mostrar loading
+            document.getElementById('loading').classList.add('active');
+            document.getElementById('submitBtn').disabled = true;
+            form.style.display = 'none';
+
+            try {
+                const response = await fetch('/register', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    showAlert('¡Registro exitoso! Redirigiendo al inicio de sesión...', 'success');
+                    
+                    setTimeout(() => {
+                        window.location.href = '/';
+                    }, 2000);
+                } else {
+                    showAlert(result.message || 'Error al registrar. Por favor intenta de nuevo.', 'error');
+                    document.getElementById('loading').classList.remove('active');
+                    document.getElementById('submitBtn').disabled = false;
+                    form.style.display = 'block';
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showAlert('Error de conexión. Por favor verifica tu conexión a internet.', 'error');
+                document.getElementById('loading').classList.remove('active');
+                document.getElementById('submitBtn').disabled = false;
+                form.style.display = 'block';
+            }
+        });
+
+        function showAlert(message, type) {
+            const alert = document.getElementById('alert');
+            const icon = '<span class="alert-icon"></span>';
+            alert.innerHTML = icon + message;
+            alert.className = 'alert alert-' + type;
+            alert.style.display = 'block';
+
+            // Auto-ocultar después de 5 segundos
+            setTimeout(() => {
+                alert.style.display = 'none';
+            }, 5000);
+
+            // Scroll al alert
+            alert.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+
+        // Establecer fecha máxima (18 años atrás desde hoy)
+        const today = new Date();
+        const maxDate = new Date(today.getFullYear() - 18, today.getMonth(), today.getDate());
+        const maxDateString = maxDate.toISOString().split('T')[0];
+        document.querySelector('input[name="fecha_nacimiento"]').setAttribute('max', maxDateString);
+
+        // Establecer fecha mínima (120 años atrás)
+        const minDate = new Date(today.getFullYear() - 120, today.getMonth(), today.getDate());
+        const minDateString = minDate.toISOString().split('T')[0];
+        document.querySelector('input[name="fecha_nacimiento"]').setAttribute('min', minDateString);
+    </script>
+</body>
+</html>

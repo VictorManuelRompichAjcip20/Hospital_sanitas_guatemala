@@ -1,0 +1,1045 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Paciente - Hospital Sanitas</title>
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #F0F4F8;
+            color: #334155;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #4FC3F7 0%, #0288D1 100%);
+            color: white;
+            padding: 24px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 16px rgba(15, 118, 179, 0.15);
+        }
+
+        .header h1 {
+            font-weight: 600;
+            font-size: 26px;
+            letter-spacing: -0.5px;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease-in-out;
+            font-size: 14px;
+        }
+
+        .btn-pdf {
+            background: #10B981;
+            color: white;
+        }
+
+        .btn-pdf:hover {
+            background: #059669;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+        }
+
+        .logout-btn {
+            background: rgba(255, 255, 255, 0.15);
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.4);
+            padding: 10px 24px;
+            border-radius: 24px;
+            backdrop-filter: blur(10px);
+        }
+
+        .logout-btn:hover {
+            background: white;
+            color: #0288D1;
+            border-color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(255, 255, 255, 0.3);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 32px auto;
+            padding: 0 24px;
+        }
+
+        .welcome-card {
+            background: white;
+            padding: 32px;
+            border-radius: 16px;
+            box-shadow: 0 2px 8px rgba(15, 23, 42, 0.08);
+            margin-bottom: 32px;
+            transition: all 0.3s ease-in-out;
+        }
+
+        .welcome-card:hover {
+            box-shadow: 0 8px 24px rgba(79, 195, 247, 0.15);
+        }
+
+        .welcome-card h2 {
+            color: #0288D1;
+            font-weight: 600;
+            font-size: 24px;
+            margin-bottom: 8px;
+        }
+
+        .welcome-card p {
+            color: #64748B;
+            font-size: 15px;
+        }
+
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+
+        .card {
+            background: white;
+            padding: 28px;
+            border-radius: 16px;
+            box-shadow: 0 2px 8px rgba(15, 23, 42, 0.08);
+            cursor: pointer;
+            transition: all 0.3s ease-in-out;
+            border: 1px solid rgba(79, 195, 247, 0.1);
+        }
+
+        .card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 12px 32px rgba(79, 195, 247, 0.2);
+            border-color: #4FC3F7;
+        }
+
+        .card-icon {
+            font-size: 42px;
+            margin-bottom: 16px;
+        }
+
+        .card h3 {
+            color: #334155;
+            margin-bottom: 10px;
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .card p {
+            color: #64748B;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .data-section {
+            background: white;
+            padding: 32px;
+            border-radius: 16px;
+            box-shadow: 0 2px 8px rgba(15, 23, 42, 0.08);
+            display: none;
+        }
+
+        .data-section.active {
+            display: block;
+            animation: fadeIn 0.4s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .data-section h3 {
+            color: #334155;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 3px solid #E0F2FE;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 600;
+            font-size: 20px;
+        }
+
+        .data-item {
+            background: #F8FAFC;
+            padding: 18px;
+            margin-bottom: 16px;
+            border-radius: 12px;
+            border-left: 4px solid #4FC3F7;
+            position: relative;
+            transition: all 0.3s ease-in-out;
+        }
+
+        .data-item:hover {
+            background: #EFF6FF;
+            transform: translateX(4px);
+            box-shadow: 0 2px 8px rgba(79, 195, 247, 0.1);
+        }
+
+        .data-item strong {
+            color: #4FC3F7;
+            font-weight: 600;
+        }
+
+        .item-actions {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            display: flex;
+            gap: 6px;
+        }
+
+        .btn-edit {
+            background: #3B82F6;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 500;
+            transition: all 0.3s ease-in-out;
+        }
+
+        .btn-edit:hover {
+            background: #2563EB;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(59, 130, 246, 0.3);
+        }
+
+        .btn-delete {
+            background: #EF4444;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 500;
+            transition: all 0.3s ease-in-out;
+        }
+
+        .btn-delete:hover {
+            background: #DC2626;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(239, 68, 68, 0.3);
+        }
+
+        .btn-add {
+            background: linear-gradient(135deg, #4FC3F7 0%, #0288D1 100%);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.3s ease-in-out;
+        }
+
+        .btn-add:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(79, 195, 247, 0.4);
+        }
+
+        .back-btn {
+            background: #64748B;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 10px;
+            cursor: pointer;
+            margin-bottom: 24px;
+            font-weight: 500;
+            transition: all 0.3s ease-in-out;
+        }
+
+        .back-btn:hover {
+            background: #475569;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(100, 116, 139, 0.3);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(15, 23, 42, 0.6);
+            overflow-y: auto;
+            backdrop-filter: blur(4px);
+            animation: fadeInModal 0.3s ease-in-out;
+        }
+
+        @keyframes fadeInModal {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 50px auto;
+            padding: 36px;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(15, 23, 42, 0.3);
+            animation: slideUp 0.3s ease-in-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(30px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 3px solid #E0F2FE;
+        }
+
+        .modal-header h2 {
+            color: #0288D1;
+            font-weight: 600;
+            font-size: 22px;
+        }
+
+        .close {
+            color: #94A3B8;
+            font-size: 32px;
+            font-weight: 300;
+            cursor: pointer;
+            transition: all 0.3s ease-in-out;
+            line-height: 1;
+        }
+
+        .close:hover {
+            color: #334155;
+            transform: rotate(90deg);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #334155;
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #E2E8F0;
+            border-radius: 10px;
+            font-size: 14px;
+            transition: all 0.3s ease-in-out;
+            font-family: inherit;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #4FC3F7;
+            box-shadow: 0 0 0 3px rgba(79, 195, 247, 0.1);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .btn-submit {
+            background: linear-gradient(135deg, #4FC3F7 0%, #0288D1 100%);
+            color: white;
+            border: none;
+            padding: 14px 32px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 15px;
+            width: 100%;
+            transition: all 0.3s ease-in-out;
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(79, 195, 247, 0.4);
+        }
+
+        .alert {
+            padding: 16px 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            display: none;
+            align-items: center;
+            gap: 12px;
+            animation: slideInRight 0.4s ease-in-out;
+            position: fixed;
+            top: 24px;
+            right: 24px;
+            z-index: 2000;
+            min-width: 320px;
+            max-width: 420px;
+            box-shadow: 0 10px 40px rgba(15, 23, 42, 0.2);
+        }
+
+        @keyframes slideInRight {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .alert.success {
+            background: #ECFDF5;
+            color: #065F46;
+            border: 2px solid #10B981;
+        }
+
+        .alert.error {
+            background: #FEF2F2;
+            color: #991B1B;
+            border: 2px solid #EF4444;
+        }
+
+        .alert-icon {
+            width: 48px;
+            height: 48px;
+            flex-shrink: 0;
+        }
+
+        .checkmark-circle {
+            stroke-dasharray: 166;
+            stroke-dashoffset: 166;
+            stroke-width: 3;
+            stroke: #10B981;
+            fill: none;
+            animation: stroke 0.6s cubic-bezier(0.65, 0, 0.45, 1) forwards;
+        }
+
+        .checkmark-check {
+            transform-origin: 50% 50%;
+            stroke-dasharray: 48;
+            stroke-dashoffset: 48;
+            stroke: #10B981;
+            stroke-width: 3;
+            fill: none;
+            animation: stroke 0.3s cubic-bezier(0.65, 0, 0.45, 1) 0.5s forwards;
+        }
+
+        @keyframes stroke {
+            100% {
+                stroke-dashoffset: 0;
+            }
+        }
+
+        .error-circle {
+            stroke-dasharray: 166;
+            stroke-dashoffset: 166;
+            stroke-width: 3;
+            stroke: #EF4444;
+            fill: none;
+            animation: stroke 0.6s cubic-bezier(0.65, 0, 0.45, 1) forwards;
+        }
+
+        .error-x {
+            stroke-dasharray: 48;
+            stroke-dashoffset: 48;
+            stroke: #EF4444;
+            stroke-width: 3;
+            stroke-linecap: round;
+            fill: none;
+            animation: stroke 0.3s cubic-bezier(0.65, 0, 0.45, 1) 0.5s forwards;
+        }
+
+        .alert-message {
+            flex: 1;
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                padding: 20px 24px;
+            }
+
+            .header h1 {
+                font-size: 20px;
+            }
+
+            .container {
+                padding: 0 16px;
+            }
+
+            .cards-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .header-actions {
+                flex-direction: column;
+            }
+
+            .alert {
+                right: 16px;
+                left: 16px;
+                min-width: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🏥 Hospital Sanitas - Portal del Paciente</h1>
+        <div class="header-actions">
+            <button class="btn btn-pdf" onclick="generarPDF()">📄 Descargar PDF</button>
+            <button class="logout-btn" onclick="logout()">Cerrar Sesión</button>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="welcome-card">
+            <h2>Bienvenido a tu Portal Médico</h2>
+            <p>Aquí puedes consultar, agregar, editar y eliminar tu historial médico completo.</p>
+        </div>
+
+        <div id="menuCards" class="cards-grid">
+            <div class="card" onclick="showSection('datos-personales')">
+                <div class="card-icon">👤</div>
+                <h3>Datos Personales</h3>
+                <p>Ver y actualizar información personal</p>
+            </div>
+
+            <div class="card" onclick="showSection('alergias')">
+                <div class="card-icon">🚨</div>
+                <h3>Alergias</h3>
+                <p>Gestionar alergias y reacciones</p>
+            </div>
+
+            <div class="card" onclick="showSection('enfermedades')">
+                <div class="card-icon">🏥</div>
+                <h3>Enfermedades</h3>
+                <p>Gestionar historial de enfermedades</p>
+            </div>
+
+            <div class="card" onclick="showSection('cirugias')">
+                <div class="card-icon">🔪</div>
+                <h3>Cirugías</h3>
+                <p>Gestionar procedimientos quirúrgicos</p>
+            </div>
+
+            <div class="card" onclick="showSection('medicamentos')">
+                <div class="card-icon">💊</div>
+                <h3>Medicamentos</h3>
+                <p>Gestionar medicamentos actuales</p>
+            </div>
+
+            <div class="card" onclick="showSection('vacunas')">
+                <div class="card-icon">💉</div>
+                <h3>Vacunas</h3>
+                <p>Gestionar registro de vacunación</p>
+            </div>
+
+            <div class="card" onclick="showSection('habitos')">
+                <div class="card-icon">🏃</div>
+                <h3>Hábitos de Salud</h3>
+                <p>Gestionar hábitos y estilo de vida</p>
+            </div>
+
+            <div class="card" onclick="showSection('antecedentes')">
+                <div class="card-icon">👨‍👩‍👦</div>
+                <h3>Antecedentes Familiares</h3>
+                <p>Historial médico familiar</p>
+            </div>
+
+            <div class="card" onclick="showSection('archivos')">
+                <div class="card-icon">📎</div>
+                <h3>Archivos Médicos</h3>
+                <p>Exámenes, imágenes y documentos</p>
+            </div>
+        </div>
+
+        <div id="dataSection" class="data-section">
+            <button class="back-btn" onclick="hideSection()">← Volver</button>
+            <h3>
+                <span id="sectionTitle"></span>
+                <button class="btn-add" id="btnAdd" onclick="openAddModal()">+ Agregar</button>
+            </h3>
+            <div id="sectionContent" class="loading">Cargando datos...</div>
+        </div>
+    </div>
+
+    <!-- Modal para agregar/editar -->
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle">Agregar Registro</h2>
+                <span class="close" onclick="closeModal()">&times;</span>
+            </div>
+            <div id="modalAlert"></div>
+            <form id="modalForm" onsubmit="submitForm(event)">
+                <div id="formFields"></div>
+                <button type="submit" class="btn-submit">Guardar</button>
+            </form>
+        </div>
+    </div>
+
+<script>
+    let currentSection = '';
+    let currentData = [];
+    let editingId = null;
+    let currentPacienteId = null;
+
+    // Cargar datos del paciente al iniciar
+    async function loadPatientData() {
+        try {
+            const response = await fetch('/mi-informacion');
+            const data = await response.json();
+            if (data.success && data.paciente) {
+                currentPacienteId = data.paciente.id;
+                console.log('ID del paciente cargado:', currentPacienteId);
+            } else {
+                console.error('No se pudo obtener la información del paciente');
+            }
+        } catch (error) {
+            console.error('Error al cargar datos del paciente:', error);
+        }
+    }
+
+    async function showSection(section) {
+        if (!currentPacienteId) await loadPatientData();
+        if (!currentPacienteId) {
+            alert('Error: No se pudo obtener tu información. Por favor, recarga la página.');
+            return;
+        }
+
+        currentSection = section;
+        document.getElementById('menuCards').style.display = 'none';
+        document.getElementById('dataSection').classList.add('active');
+
+        const titles = {
+            'datos-personales': 'Datos Personales',
+            'alergias': 'Alergias',
+            'enfermedades': 'Enfermedades',
+            'cirugias': 'Cirugías',
+            'medicamentos': 'Medicamentos',
+            'vacunas': 'Vacunas',
+            'habitos': 'Hábitos de Salud',
+            'antecedentes': 'Antecedentes Familiares',
+            'archivos': 'Archivos Médicos'
+        };
+        document.getElementById('sectionTitle').textContent = titles[section];
+
+        // Mostrar u ocultar botón agregar
+        document.getElementById('btnAdd').style.display = ['datos-personales','antecedentes','archivos'].includes(section) ? 'none' : 'inline-block';
+
+        await loadSectionData(section);
+    }
+
+    async function loadSectionData(section) {
+        const content = document.getElementById('sectionContent');
+        content.innerHTML = '<div class="loading">Cargando datos...</div>';
+
+        // Mapear sección a endpoint con ID del paciente
+        const endpoints = {
+            'datos-personales': `/pacientes/${currentPacienteId}`,
+            'alergias': `/pacientes/${currentPacienteId}/alergias`,
+            'enfermedades': `/pacientes/${currentPacienteId}/enfermedades`,
+            'cirugias': `/pacientes/${currentPacienteId}/cirugias`,
+            'medicamentos': `/pacientes/${currentPacienteId}/medicamentos`,
+            'vacunas': `/pacientes/${currentPacienteId}/vacunas`,
+            'habitos': `/pacientes/${currentPacienteId}/habitos`,
+            'antecedentes': `/pacientes/${currentPacienteId}/antecedentes-familiares`,
+            'archivos': `/pacientes/${currentPacienteId}/archivos`
+        };
+
+        try {
+            const response = await fetch(endpoints[section]);
+            const data = await response.json();
+
+            if (data.success) {
+                displayData(section, data);
+            } else {
+                content.innerHTML = '<p>Error al cargar datos</p>';
+            }
+        } catch (error) {
+            content.innerHTML = '<p>Error de conexión</p>';
+        }
+    }
+
+    function displayData(section, data) {
+        const content = document.getElementById('sectionContent');
+        let html = '';
+
+        switch(section) {
+            case 'datos-personales':
+                const p = data.paciente;
+                html = `
+                    <div class="data-item">
+                        <strong>Nombre Completo:</strong> ${p.nombres} ${p.apellidos}<br>
+                        <strong>Identificación:</strong> ${p.identificacion}<br>
+                        <strong>Fecha de Nacimiento:</strong> ${p.fecha_nacimiento}<br>
+                        <strong>Género:</strong> ${p.genero || 'No especificado'}<br>
+                        <strong>Teléfono:</strong> ${p.telefono || 'No especificado'}<br>
+                        <strong>Dirección:</strong> ${p.direccion || 'No especificada'}<br>
+                        <strong>Email:</strong> ${p.email}
+                    </div>
+                    ${p.contacto_emergencia_nombre ? `
+                    <div class="data-item" style="margin-top: 15px;">
+                        <h4 style="color: #667eea; margin-bottom: 10px;">Contacto de Emergencia</h4>
+                        <strong>Nombre:</strong> ${p.contacto_emergencia_nombre}<br>
+                        <strong>Teléfono:</strong> ${p.contacto_emergencia_telefono || 'No especificado'}<br>
+                        <strong>Relación:</strong> ${p.contacto_emergencia_relacion || 'No especificada'}
+                    </div>` : ''}`;
+                break;
+
+            default:
+                let dataKey = section;
+                if (section === 'antecedentes') {
+                    dataKey = 'antecedentes_familiares'; 
+                }
+
+                currentData = data[dataKey] || [];
+
+                if (!currentData || currentData.length === 0) {
+                    if (['datos-personales', 'antecedentes', 'archivos'].includes(section)) {
+                        html = `<p>No hay ${section === 'antecedentes' ? 'antecedentes familiares' : section.replace('-', ' ')} registradas.</p>`;
+                    } else {
+                        html = `<p>No hay ${section} registradas. Haz clic en "+ Agregar" para registrar.</p>`;
+                    }
+                } else {
+                    currentData.forEach(item => {
+                        html += `<div class="data-item">
+                            <div class="item-actions">
+                                <button class="btn-edit" onclick="editItem('${section}', ${item.id})">✏️ Editar</button>
+                                <button class="btn-delete" onclick="deleteItem('${section}', ${item.id})">🗑️ Eliminar</button>
+                            </div>`;
+                        
+                        if (section === 'alergias') {
+                            html += `<strong>${item.nombre}</strong><br>
+                                    Tipo: ${item.tipo || 'N/A'} | Severidad: ${item.severidad || 'N/A'}<br>
+                                    Reacción: ${item.reaccion || 'N/A'}<br>
+                                    ${item.notas ? 'Notas: ' + item.notas : ''}`;
+                        } else if (section === 'enfermedades') {
+                            html += `<strong>${item.nombre}</strong><br>
+                                    Estado: ${item.estado || 'N/A'}<br>
+                                    Diagnóstico: ${item.fecha_diagnostico || 'N/A'}<br>
+                                    ${item.tratamiento ? 'Tratamiento: ' + item.tratamiento : ''}`;
+                        } else if (section === 'cirugias') {
+                            html += `<strong>${item.nombre}</strong><br>
+                                    Fecha: ${item.fecha_cirugia || 'N/A'}<br>
+                                    Hospital: ${item.hospital || 'N/A'}<br>
+                                    Cirujano: ${item.cirujano || 'N/A'}`;
+                        } else if (section === 'vacunas') {
+                            html += `<strong>${item.nombre}</strong><br>
+                                    Fecha: ${item.fecha_aplicacion || 'N/A'} | Dosis: ${item.dosis || 'N/A'}<br>
+                                    ${item.proxima_dosis ? 'Próxima dosis: ' + item.proxima_dosis : ''}`;
+                        } else if (section === 'medicamentos') {
+                            html += `<strong>${item.nombre}</strong><br>
+                                    Dosis: ${item.dosis || 'N/A'} | Frecuencia: ${item.frecuencia || 'N/A'}<br>
+                                    Vía: ${item.via_administracion || 'N/A'}<br>
+                                    Inicio: ${item.fecha_inicio || 'N/A'}`;
+                        } else if (section === 'habitos') {
+                            html += `<strong>${item.tipo}</strong><br>
+                                    ${item.descripcion || ''}<br>
+                                    Frecuencia: ${item.frecuencia || 'N/A'}`;
+                        } else if (section === 'antecedentes') {
+                            html += `<strong>${item.enfermedad || 'Enfermedad no especificada'}</strong><br>
+                                    Parentesco: ${item.parentesco || 'N/A'}<br>
+                                    Estado: ${item.estado || 'N/A'} | Edad de Diagnóstico: ${item.edad_diagnostico || 'N/A'}<br>
+                                    ${item.notas ? 'Notas: ' + item.notas : ''}`;
+                        } else {
+                            html += `<strong>${item.nombre || item.tipo || 'Registro'}</strong>`;
+                        }
+                        
+                        html += `</div>`;
+                    });
+                }
+                break;
+        }
+
+        content.innerHTML = html;
+    }
+
+    function openAddModal() {
+        editingId = null;
+        document.getElementById('modalTitle').textContent = 'Agregar ' + document.getElementById('sectionTitle').textContent;
+        generateFormFields(currentSection);
+        document.getElementById('modal').classList.add('active');
+    }
+
+    function editItem(type, id) {
+        editingId = id;
+        document.getElementById('modalTitle').textContent = 'Editar ' + document.getElementById('sectionTitle').textContent;
+        const item = currentData.find(i => i.id === id);
+        generateFormFields(currentSection, item);
+        document.getElementById('modal').classList.add('active');
+    }
+
+    function generateFormFields(section, data = {}) {
+        const formFields = document.getElementById('formFields');
+        let html = '';
+
+        const fields = {
+            'alergias': [
+                { name: 'nombre', label: 'Nombre', type: 'text', required: true },
+                { name: 'tipo', label: 'Tipo', type: 'select', options: ['Medicamento', 'Alimento', 'Ambiental', 'Otra'] },
+                { name: 'severidad', label: 'Severidad', type: 'select', options: ['Leve', 'Moderada', 'Severa'] },
+                { name: 'reaccion', label: 'Reacción', type: 'text' },
+                { name: 'fecha_diagnostico', label: 'Fecha de diagnóstico', type: 'date' },
+                { name: 'notas', label: 'Notas', type: 'textarea' }
+            ],
+
+            'enfermedades': [
+                { name: 'nombre', label: 'Nombre', type: 'text', required: true },
+                { name: 'estado', label: 'Estado', type: 'select', options: ['Activo', 'Inactivo'] },
+                { name: 'fecha_diagnostico', label: 'Fecha de diagnóstico', type: 'date' },
+                { name: 'tratamiento', label: 'Tratamiento', type: 'text' },
+                { name: 'notas', label: 'Notas', type: 'textarea' }
+            ],
+
+            'cirugias': [
+                { name: 'nombre', label: 'Nombre', type: 'text', required: true },
+                { name: 'fecha_cirugia', label: 'Fecha de cirugía', type: 'date' },
+                { name: 'hospital', label: 'Hospital', type: 'text' },
+                { name: 'cirujano', label: 'Cirujano', type: 'text' },
+                { name: 'complicaciones', label: 'Complicaciones', type: 'textarea' },
+                { name: 'notas', label: 'Notas', type: 'textarea' }
+            ],
+
+            'medicamentos': [
+                { name: 'nombre', label: 'Nombre', type: 'text', required: true },
+                { name: 'dosis', label: 'Dosis', type: 'text' },
+                { name: 'frecuencia', label: 'Frecuencia', type: 'text' },
+                { name: 'via_administracion', label: 'Vía de administración', type: 'text' },
+                { name: 'fecha_inicio', label: 'Fecha de inicio', type: 'date' },
+                { name: 'notas', label: 'Notas', type: 'textarea' }
+            ],
+
+            'vacunas': [
+                { name: 'nombre', label: 'Nombre', type: 'text', required: true },
+                { name: 'fecha_aplicacion', label: 'Fecha de aplicación', type: 'date' },
+                { name: 'dosis', label: 'Dosis', type: 'text' },
+                { name: 'proxima_dosis', label: 'Próxima dosis', type: 'date' }
+            ],
+
+            'habitos': [
+                { name: 'tipo', label: 'Tipo de hábito', type: 'text', required: true },
+                { name: 'descripcion', label: 'Descripción', type: 'textarea' },
+                { name: 'frecuencia', label: 'Frecuencia', type: 'text' },
+                { name: 'fecha_inicio', label: 'Fecha de inicio', type: 'date' },
+                { name: 'notas', label: 'Notas', type: 'textarea' }
+            ],
+
+            'antecedentes': [
+                { name: 'parentesco', label: 'Parentesco', type: 'select', options: ['Padre', 'Madre', 'Hermano(a)', 'Abuelo(a)', 'Otro'], required: true },
+                { name: 'enfermedad', label: 'Enfermedad', type: 'text', required: true },
+                { name: 'estado', label: 'Estado', type: 'select', options: ['Vivo', 'Fallecido', 'N/A'] },
+                { name: 'edad_diagnostico', label: 'Edad de diagnóstico', type: 'number' },
+                { name: 'notas', label: 'Notas', type: 'textarea' }
+            ]
+        };
+
+        const sectionFields = fields[section] || [];
+        sectionFields.forEach(field => {
+            html += '<div class="form-group">';
+            html += `<label for="${field.name}">${field.label}${field.required ? ' *' : ''}</label>`;
+            if (field.type === 'select') {
+                html += `<select name="${field.name}" id="${field.name}" ${field.required ? 'required' : ''}><option value="">Seleccionar...</option>`;
+                field.options.forEach(opt => {
+                    const selected = data[field.name] === opt ? 'selected' : '';
+                    html += `<option value="${opt}" ${selected}>${opt}</option>`;
+                });
+                html += '</select>';
+            } else if (field.type === 'textarea') {
+                html += `<textarea name="${field.name}" id="${field.name}" ${field.required ? 'required' : ''}>${data[field.name] || ''}</textarea>`;
+            } else {
+                html += `<input type="${field.type}" name="${field.name}" id="${field.name}" value="${data[field.name] || ''}" ${field.required ? 'required' : ''}>`;
+            }
+            html += '</div>';
+        });
+
+        formFields.innerHTML = html;
+    }
+
+    async function submitForm(event) {
+        event.preventDefault();
+        const formData = new FormData(event.target);
+        const data = Object.fromEntries(formData.entries());
+
+        // Mapeo actualizado para incluir 'antecedentes' en POST/PUT
+        const apiMap = {
+            'alergias': 'alergias',
+            'enfermedades': 'enfermedades',
+            'cirugias': 'cirugias',
+            'medicamentos': 'medicamentos',
+            'vacunas': 'vacunas',
+            'habitos': 'habitos',
+            'antecedentes': 'antecedentes-familiares' 
+        };
+
+        const apiEndpoint = apiMap[currentSection];
+
+        if (!apiEndpoint) {
+            showAlert('error', 'Funcionalidad de guardar no disponible para esta sección.');
+            return; 
+        }
+        
+        const method = editingId ? 'PUT' : 'POST';
+        const url = editingId
+            ? `/api/paciente/${apiEndpoint}/${editingId}`
+            : `/api/paciente/${apiEndpoint}`;
+
+        try {
+            const response = await fetch(url, {
+                method: method,
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+            const result = await response.json();
+            if (result.success) {
+                showAlert('success', result.message);
+                closeModal();
+                // Esta línea garantiza el refresco del dashboard
+                await loadSectionData(currentSection); 
+            } else {
+                showAlert('error', result.message || 'Error al guardar');
+            }
+        } catch (error) {
+            showAlert('error', 'Error de conexión');
+        }
+    }
+
+    function deleteItem(section, id) {
+        if (!confirm('¿Deseas eliminar este registro?')) return;
+        
+        const apiMap = {
+            'alergias': 'alergias',
+            'enfermedades': 'enfermedades',
+            'cirugias': 'cirugias',
+            'medicamentos': 'medicamentos',
+            'vacunas': 'vacunas',
+            'habitos': 'habitos',
+            'antecedentes': 'antecedentes-familiares'
+        };
+
+        const apiEndpoint = apiMap[section];
+
+        if (!apiEndpoint) {
+            showAlert('error', 'Funcionalidad de eliminar no disponible para esta sección.');
+            return;
+        }
+
+        fetch(`/api/paciente/${apiMap[section]}/${id}`, { method: 'DELETE' })
+            .then(res => res.json())
+            .then(result => {
+                if (result.success) {
+                    showAlert('success', result.message);
+                    // Esta línea garantiza el refresco del dashboard
+                    loadSectionData(section); 
+                } else {
+                    showAlert('error', result.message || 'Error al eliminar');
+                }
+            }).catch(() => showAlert('error', 'Error de conexión'));
+    }
+
+    function closeModal() {
+        document.getElementById('modal').classList.remove('active');
+        editingId = null;
+    }
+
+    function hideSection() {
+        document.getElementById('menuCards').style.display = 'grid';
+        document.getElementById('dataSection').classList.remove('active');
+    }
+
+    async function logout() {
+        try {
+            await fetch('/logout', { method: 'POST' });
+            window.location.href = '/';
+        } catch (error) {
+            console.error('Error al cerrar sesión:', error);
+        }
+    }
+
+    function showAlert(type, message) {
+        const alertBox = document.getElementById('alertBox');
+        alertBox.textContent = message;
+        alertBox.className = `alert ${type}`;
+        alertBox.style.display = 'block';
+        setTimeout(() => { alertBox.style.display = 'none'; }, 4000);
+    }
+
+    async function generarPDF() {
+        try {
+            window.location.href = `/api/medico/pacientes/${currentPacienteId}/pdf`;
+        } catch (error) {
+            alert('Error al generar el PDF');
+            console.error(error);
+        }
+    }
+
+    // Inicializar
+    loadPatientData();
+</script>
+        
+</body>
+</html>
